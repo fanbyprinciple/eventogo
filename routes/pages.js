@@ -3,6 +3,8 @@ route = router();
 const dbAction = require('../db/actions');
 const passport = require('../auth/passport');
 const el = require('../auth/authutils').ensureLogin;
+const models = require('../db/models').models;
+const uid = require('uid2');
 
 route.get('/login', (req, res)=>{
 	return res.render('login', {});
@@ -12,6 +14,27 @@ route.post('/login', passport.authenticate('local',{
 	failureRedirect: '/login',
 	successRedirect: '/profile'
 }));
+
+route.post('/authorize', (req, res) => {
+    models.UserLocal.findOne({
+        where: {
+            username: req.body.username,
+            password: req.body.password
+        }
+    }).then((user) => {
+		if(!user) {
+			res.send("input values first !");
+		} else {
+			models.AuthToken.create({ 
+				// problem this creates authtoken for the same user twice
+				token: uid(30),
+				userId: user.id
+			}).then((authtoken) => {
+				res.send(authtoken.token)
+			})
+		}
+    })
+});
 
 route.get('/signup' , (req,res)=>{
 	return res.render('signup', {});
