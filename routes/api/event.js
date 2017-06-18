@@ -1,16 +1,20 @@
-const eRouter = require('express').Router;
-eRoute = eRouter();
+const eventRouter = require('express').Router;
+eventRoute = eventRouter();
 
-eRoute.get('/' , (req,res)=>{
+eventRoute.get('/' , (req,res)=>{
 	res.send("Get array of events here");
 });
 
-eRoute.get('/new', (req,res)=>{
+eventRoute.post('/new', (req,res)=>{
 	res.send('Add an event here');
 });
 
-eRoute.get('/:id', (req,res)=>{
+eventRoute.get('/:id', (req,res)=>{
 	res.send('Get detail of your event here');
 });
 
-module.exports = eRoute;
+eventRoute.put('/:id', (req,res)=>{
+	res.send("Modify events here");
+});
+
+module.exports = eventRoute;

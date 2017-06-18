@@ -29,7 +29,7 @@ const User = db.define('user', {
 	email: Sequelize.STRING
 });
 
-const UserLocal = db.define('userLocal', {
+const UserLocal = db.define('userlocal', {
 	id: {
 		type: Sequelize.INTEGER,
 		autoIncrement: true,
@@ -39,22 +39,22 @@ const UserLocal = db.define('userLocal', {
 	password: Sequelize.STRING
 });
 
-const AuthToken = db.define('authToken' , {
-	token:{
-		type: Sequelize.STRING,
-		primaryKey: true
-	}
-});
+// const AuthToken = db.define('authToken' , {
+// 	token:{
+// 		type: Sequelize.STRING,
+// 		primaryKey: true
+// 	}
+// });
 
 //relationships
-Event.belongsTo('User');
-User.hasMany('Events');
+Event.belongsTo(User);
+User.hasMany(Event);
 
-UserLocal.belongsTo('User');
-User.hasOne('UserLocal');
+UserLocal.belongsTo(User);
+User.hasOne(UserLocal);
 
-AuthToken.belongsTo('User');
-User.hasOne('AuthToken');
+// AuthToken.belongsTo('User');
+// User.hasOne('AuthToken');
 
 db.sync({force: false})
 	.then(function (){
@@ -69,7 +69,7 @@ module.exports = {
 	models: {
 		User,
 		UserLocal,
-		Event,
-		AuthToken
+		Event
+		//AuthToken
 	}
 }

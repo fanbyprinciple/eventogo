@@ -11,13 +11,14 @@ function signUp( name, email, username, password ){
         }
         
     } , {
-        include: [models.User] // includes the details about User
+        include: [models.User] 
     })
 }
 
 function addUser( name , email ){
     return models.User.create({
-        name, email
+        name, email  
+        // Why does this work, shouldn't we use 'name:name' convention
     })
 }
 

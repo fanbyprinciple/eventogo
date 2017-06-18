@@ -1,12 +1,12 @@
-const uRouter = require("express").Router;
-uRoute = uRouter();
+const userRouter = require("express").Router;
+userRoute = userRouter();
 
-// uRoute.get('/' , (req,res)=>{
+// userRoute.get('/' , (req,res)=>{
 // 	res.send("Details of user here");
 // });
 
-uRoute.get('/:id' , (req,res)=>{
+userRoute.get('/:id' , (req,res)=>{
 	res.send("Details of user of given id here");
 });
 
-module.exports = uRoute;
+module.exports = userRoute;
