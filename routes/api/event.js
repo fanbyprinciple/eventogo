@@ -79,6 +79,32 @@ eventRoute.get('/:id', (req,res)=>{
 	res.send('Get detail of your event here');
 });
 
+eventRoute.get('/:id/invitees' , (req,res)=>{
+    EventInvitee.findAll({
+        attributes: ['id'] ,
+        where: {
+            eventId: req.params.id,
+            '$event.userId$': 1 /*req.user.id*/
+        } ,
+        include: [{
+            model: Invitee,
+            as: 'invitee',
+            attributes: ['id' , 'email']
+        } , {
+            model: Event,
+            as: 'event',
+            attributes: ['id', 'userId']
+        }]
+    }).then((invitees)=>{
+        
+        if(invitees) {
+            res.status(200).send(invitees)
+        } else {
+            res.status(500).send("No invitees for this event");
+        }
+    })
+});
+
 eventRoute.put('/:id', (req,res)=>{
 	//res.send("Modify events here");
 	Event.update({
@@ -118,6 +144,54 @@ eventRoute.delete('/:id', /*authutils.eia(),*/ (req, res) => {
             res.status(200).send('Event successfully deleted')
         }
 
+    })
+});
+
+eventRoute.put('/:id/invitees', (req, res) => {
+    let invitees = req.body.invitees.split(';');
+    invitees = invitees.map((i) => {
+        return {email: i.trim()}
+        /*
+	        returning an object with email key as the bulkCreate statement 
+	        needs to be executed with Invitee.bulkCreate({email: inviteeEmail})
+	        just like create({}) syntax
+		*/
+    });
+
+    Invitee.bulkCreate(invitees, {
+        ignoreDuplicates: true
+    })
+        .then((invitees) => {
+            let eventInvitee = invitees.map((i) => {
+                return {
+                    eventId: req.params.id,
+                    inviteeId: i.id
+                }
+            });
+
+            EventInvitee.bulkCreate(eventInvitee, {
+                ignoreDuplicates: true
+            })
+                .then((eiArr) => {
+                    res.status(200).send({
+                        newInvitees: eiArr
+                    })
+                })
+        })
+});
+
+eventRoute.delete('/:id/invitees/:invId', (req, res) => {
+    EventInvitee.destroy({
+        where: {
+            eventId: req.params.id,
+            inviteeId: req.params.invId
+        }
+    }).then((result) => {
+        if (result == 0) {
+            return res.status(500).send({error: 'Invitee or Event did not exist'})
+        } else {
+            return res.status(200).send({success: true})
+        }
     })
 });
 
