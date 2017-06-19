@@ -7,6 +7,7 @@ route.get('/' , (req,res)=>{
 
 route.use('/event' , require('./event'));
 route.use('/user' , require('./user'));
+  
 
 
 module.exports = route;

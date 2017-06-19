@@ -56,6 +56,34 @@ User.hasOne(UserLocal);
 AuthToken.belongsTo(User);
 User.hasOne(AuthToken);
 
+const Invitee = db.define('invitee', {
+    id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    email: {
+        type: Sequelize.STRING,
+        unique: true,
+        index: true
+    }
+});
+
+const EventInvitee = db.define('eventinvitee', {
+    id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
+    rsvp: Sequelize.BOOLEAN,
+    token: Sequelize.STRING
+});
+
+EventInvitee.belongsTo(Event);
+Event.hasMany(EventInvitee);
+EventInvitee.belongsTo(Invitee);
+Invitee.hasMany(EventInvitee);
+
 db.sync({force: false})
 	.then(function (){
 	console.log("Database successfully synchronised. ");
@@ -70,6 +98,8 @@ module.exports = {
 		User,
 		UserLocal,
 		Event,
-		AuthToken
+		AuthToken,
+		Invitee,
+		EventInvitee
 	}
 }
